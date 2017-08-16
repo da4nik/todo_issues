@@ -79,8 +79,8 @@ func visit(path string, fi os.FileInfo, err error) error {
 	// Add new line to the EOF
 	contents = append(contents, "")
 
-	// TODO: #17 Create files with the same permissions as source file
-	// TODO: #17 https://api.github.com/repos/da4nik/todo_issues/issues/17
+	// TODO: #21 Create files with the same permissions as source file
+	// TODO: #21 https://github.com/da4nik/todo_issues/issues/21
 	err = ioutil.WriteFile(path, []byte(strings.Join(contents, "\n")), 0664)
 	if err != nil {
 		return err
