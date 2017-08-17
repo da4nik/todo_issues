@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/da4nik/todo_issues/types"
@@ -36,8 +37,13 @@ const acceptHeader = "application/vnd.github.v3+json"
 
 // New - creates new github integration object
 func New(token, owner, repo string) Github {
-	// TODO: #18 Determine current repo from .git directory
-	// TODO: #18 https://github.com/da4nik/todo_issues/issues/18
+	// TODO: #23 Determine current repo from .git directory
+	// TODO: #23 https://github.com/da4nik/todo_issues/issues/23
+	if len(os.Args) >= 3 {
+		owner = os.Args[1]
+		repo = os.Args[2]
+	}
+
 	return Github{
 		accessToken: token,
 		owner:       owner,
@@ -47,6 +53,7 @@ func New(token, owner, repo string) Github {
 
 // CreateIssue creates and issue in a github repo
 func (g Github) CreateIssue(title, filename string, lineNumber int) types.IntegrationResponse {
+
 	url := fmt.Sprintf("%s/repos/%s/%s/issues", baseAPIURL, g.owner, g.repo)
 	fileLink := fmt.Sprintf("%s/%s/%s/%s#L%d", baseLinksURL, g.owner, g.repo, filename, lineNumber)
 
@@ -79,6 +86,7 @@ func (g Github) CreateIssue(title, filename string, lineNumber int) types.Integr
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusCreated {
+		fmt.Printf("Issue was not created: %s\n", resp.Status)
 		return types.IntegrationResponse{}
 	}
 

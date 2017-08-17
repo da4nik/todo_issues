@@ -19,7 +19,7 @@ run:
 	@go run ${BINARY}.go
 
 install:
-	go install ${LDFLAGS} ./...
+	GOBIN=~/bin go install ${LDFLAGS} ./...
 
 clean:
 	@if [ -f ${BINARY} ] ; then rm ${BINARY} ; fi
