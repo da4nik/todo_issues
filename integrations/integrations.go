@@ -1,6 +1,7 @@
 package integrations
 
 import (
+	"github.com/da4nik/todo_issues/config"
 	"github.com/da4nik/todo_issues/integrations/github"
 	"github.com/da4nik/todo_issues/types"
 )
@@ -10,9 +11,7 @@ type Issue interface {
 	CreateIssue(string, string, int) types.IntegrationResponse
 }
 
-// TODO: #19 Optain access_token from params/config/env vars
-// TODO: #19 https://github.com/da4nik/todo_issues/issues/19
-var integration = github.New("access_key", "da4nik", "todo_issues")
+var integration = github.New(config.GithubAccessKey, "da4nik", "todo_issues")
 
 // CreateIssue created issue, only for github now
 func CreateIssue(title, filename string, lineNumber int) types.IntegrationResponse {

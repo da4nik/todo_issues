@@ -10,8 +10,8 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/da4nik/todo_issues/config"
 	"github.com/da4nik/todo_issues/integrations"
-	"github.com/davecgh/go-spew/spew"
 )
 
 var validFileName = regexp.MustCompile(`\.(go|txt)$`)
@@ -26,8 +26,6 @@ func visit(path string, fi os.FileInfo, err error) error {
 	if fi.IsDir() || !validFileName.MatchString(fi.Name()) {
 		return nil
 	}
-
-	spew.Dump(fi)
 
 	read, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -93,6 +91,8 @@ func visit(path string, fi os.FileInfo, err error) error {
 }
 
 func main() {
+	config.Load()
+
 	err := filepath.Walk(".", visit)
 	if err != nil {
 		panic(err)
