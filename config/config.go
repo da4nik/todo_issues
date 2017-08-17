@@ -11,9 +11,10 @@ const (
 	configFileName = ".todo_issues.json"
 )
 
-// FileStruct - represents config file struct
-type FileStruct struct {
+// fileStruct - represents config file struct
+type fileStruct struct {
 	GithubAccessKey string `json:"github_access_key"`
+	Additions       bool   `json:"additions"`
 }
 
 var (
@@ -21,6 +22,9 @@ var (
 
 	// GithubAccessKey - access key, which allows to create issues in repo
 	GithubAccessKey string
+
+	// Additions - whether or not add additional info
+	Additions = false
 )
 
 // Load - loads config
@@ -29,9 +33,15 @@ func Load() {
 
 	loadFile()
 
-	if os.Getenv("TI_GITHUB_ACCESS_KEY") != "" {
-		GithubAccessKey = os.Getenv("TI_GITHUB_ACCESS_KEY")
+	GithubAccessKey = getEnv("TI_GITHUB_ACCESS_KEY", GithubAccessKey)
+}
+
+func getEnv(name, value string) string {
+	env := os.Getenv(name)
+	if env == "" {
+		return value
 	}
+	return env
 }
 
 func loadFile() {
@@ -41,11 +51,12 @@ func loadFile() {
 		return
 	}
 
-	var data FileStruct
+	var data fileStruct
 	if err := json.Unmarshal(read, &data); err != nil {
 		fmt.Printf("Unable to parse config file: %s (%s)\n", defaultConfigFile, err.Error())
 		return
 	}
 
 	GithubAccessKey = data.GithubAccessKey
+	Additions = data.Additions
 }

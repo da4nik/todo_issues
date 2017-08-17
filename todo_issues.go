@@ -69,7 +69,7 @@ func visit(path string, fi os.FileInfo, err error) error {
 		updatedLine := todoText.ReplaceAllString(scanner.Text(), lineWithID)
 
 		contents = append(contents, updatedLine)
-		if issue.IssueLink != "" {
+		if config.Additions && issue.IssueLink != "" {
 			addition := todoText.ReplaceAllString(scanner.Text(), additionText)
 			contents = append(contents, addition)
 		}
