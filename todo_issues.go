@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/da4nik/todo_issues/integrations"
+	"github.com/davecgh/go-spew/spew"
 )
 
 var validFileName = regexp.MustCompile(`\.(go|txt)$`)
@@ -25,6 +26,8 @@ func visit(path string, fi os.FileInfo, err error) error {
 	if fi.IsDir() || !validFileName.MatchString(fi.Name()) {
 		return nil
 	}
+
+	spew.Dump(fi)
 
 	read, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -63,11 +66,13 @@ func visit(path string, fi os.FileInfo, err error) error {
 		}
 
 		lineWithID := fmt.Sprintf("%s TODO: #%s %s", comment, issue.ID, title)
+		additionText := fmt.Sprintf("%s TODO: #%s %s", comment, issue.ID, issue.IssueLink)
+
 		updatedLine := todoText.ReplaceAllString(scanner.Text(), lineWithID)
 
 		contents = append(contents, updatedLine)
 		if issue.IssueLink != "" {
-			addition := fmt.Sprintf("%s TODO: #%s %s", comment, issue.ID, issue.IssueLink)
+			addition := todoText.ReplaceAllString(scanner.Text(), additionText)
 			contents = append(contents, addition)
 		}
 	}
@@ -79,9 +84,7 @@ func visit(path string, fi os.FileInfo, err error) error {
 	// Add new line to the EOF
 	contents = append(contents, "")
 
-	// TODO: #21 Create files with the same permissions as source file
-	// TODO: #21 https://github.com/da4nik/todo_issues/issues/21
-	err = ioutil.WriteFile(path, []byte(strings.Join(contents, "\n")), 0664)
+	err = ioutil.WriteFile(path, []byte(strings.Join(contents, "\n")), fi.Mode().Perm())
 	if err != nil {
 		return err
 	}
