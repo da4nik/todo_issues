@@ -23,7 +23,10 @@ func visit(path string, fi os.FileInfo, err error) error {
 		return err
 	}
 
-	if fi.IsDir() || !validFileName.MatchString(fi.Name()) {
+	if fi.IsDir() ||
+		!validFileName.MatchString(fi.Name()) ||
+		strings.HasPrefix(path, "vendor/") {
+
 		return nil
 	}
 
